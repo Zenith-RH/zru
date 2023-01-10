@@ -26,7 +26,7 @@ func Run(cmd *exec.Cmd, name string, isInteractive bool, path string) {
 		return
 	}
 
-	color.Cyan("Running command interactively. Press SPACE to detach...")
+	color.Cyan("Running command interactively. Press ENTER to detach...")
 
 	/* Getting output pipes */
 
@@ -73,7 +73,5 @@ func Run(cmd *exec.Cmd, name string, isInteractive bool, path string) {
 
 		stdout.Close()
 		stderr.Close()
-
-		color.Green("[+] Success!")
 	}
 }
