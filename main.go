@@ -116,8 +116,8 @@ func main() {
 			privPath := filepath.Join(keysPath, "privkey.pem")
 			fullchainPath := filepath.Join(keysPath, "fullchain.pem")
 
-			pathInVolume := filepath.Join("data/conf/live/", domain)
-			err := os.MkdirAll(pathInVolume, 0777)
+			pathInVolume := filepath.Join("data/certbot/conf/live/", domain)
+			err := os.MkdirAll(pathInVolume, 0666)
 			if err != nil {
 				color.Red("Could not create directory %s", pathInVolume)
 				log.Fatal(err)
