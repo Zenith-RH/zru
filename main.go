@@ -78,10 +78,13 @@ func main() {
 			color.Cyan("Running deploy command")
 
 			d.ResetChanges(repositoryPath)
-			r.Pull(repositoryPath)
+
+			command := exec.Command("git", "pull")
+			c.Run(command, "git pull", false, repositoryPath)
+
 			d.SearchAndReplace(oldUrl, newUrl, repositoryPath)
 
-			command := exec.Command("docker-compose", "down")
+			command = exec.Command("docker-compose", "down")
 			c.Run(command, "docker-compose down", false, repositoryPath)
 
 			command = exec.Command("docker-compose", "up", "--build", "-d")
