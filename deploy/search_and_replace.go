@@ -21,11 +21,13 @@ func ResetChanges(path string) {
 
 	head, err := r.Head()
 	if err != nil {
+		color.Red("Could not get HEAD commit")
 		log.Fatal(err)
 	}
 
 	wt, err := r.Worktree()
 	if err != nil {
+		color.Red("Could not resolve git worktree")
 		log.Fatal(err)
 	}
 
@@ -34,6 +36,7 @@ func ResetChanges(path string) {
 		Mode:   git.HardReset,
 	})
 	if err != nil {
+		color.Red("Could not run git reset --hard")
 		log.Fatal(err)
 	}
 
@@ -65,8 +68,9 @@ func SearchAndReplace(search string, replace string, dir string) {
 	}
 
 	// Get the absolute path of the current file
-	absPath, err := filepath.Abs(".")
+	absPath, err := filepath.Abs(dir)
 	if err != nil {
+		color.Red("Could not get absolute path")
 		fmt.Println(err)
 		return
 	}
@@ -87,6 +91,7 @@ func SearchAndReplace(search string, replace string, dir string) {
 		if info.Mode().IsRegular() && !contains(blacklist, info.Name()) {
 			file, err := ioutil.ReadFile(path)
 			if err != nil {
+				color.Red("Could not read file")
 				log.Fatalln(err)
 			}
 
@@ -100,6 +105,7 @@ func SearchAndReplace(search string, replace string, dir string) {
 			output := strings.Join(lines, "\n")
 			err = ioutil.WriteFile(path, []byte(output), 0644)
 			if err != nil {
+				color.Red("Could not write to file")
 				log.Fatalln(err)
 			}
 

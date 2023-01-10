@@ -48,6 +48,7 @@ func SwitchBranch(remote string, branch string, path string) {
 	})
 
 	if err != nil {
+		color.Red("Could not checkout to new branch")
 		log.Fatal(err)
 	}
 }
@@ -59,11 +60,13 @@ func CommitAndPush(remote string, branch string, path string) {
 	// Add and commit the changes
 	_, err := w.Add(".")
 	if err != nil {
+		color.Red("Could not add the changes")
 		log.Fatal(err)
 	}
 
 	status, err := w.Status()
 	if err != nil {
+		color.Red("Could not get git status")
 		log.Fatal(err)
 	}
 
@@ -77,6 +80,7 @@ func CommitAndPush(remote string, branch string, path string) {
 		},
 	})
 	if err != nil {
+		color.Red("Could not commit")
 		log.Fatal(err)
 	}
 
@@ -85,15 +89,18 @@ func CommitAndPush(remote string, branch string, path string) {
 		RemoteName: remote,
 	})
 	if err != nil {
+		color.Red("Could not push to new remote")
 		log.Fatal(err)
 	}
 
 	hash, err := r.ResolveRevision(plumbing.Revision("HEAD"))
 	if err != nil {
+		color.Red("Could not get commit hash")
 		log.Fatal(err)
 	}
 
-	fmt.Println("[+] Commit hash: %s\n", hash)
+	fmt.Println("[+] Commit hash:")
+	fmt.Print(hash)
 }
 
 func FetchFromRemote(remote string, path string) {

@@ -3,12 +3,16 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
+	"os/exec"
+	"path/filepath"
 
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 
 	"github.com/go-git/go-git/v5"
 
+	c "gitlab.com/bogdzn/zru/certs"
 	d "gitlab.com/bogdzn/zru/deploy"
 	r "gitlab.com/bogdzn/zru/release"
 )
@@ -22,6 +26,8 @@ var (
 	newUrl         string
 	oldUrl         string
 	repoUrl        string
+	domain         string
+	email          string
 )
 
 /*
@@ -77,8 +83,66 @@ func main() {
 			color.Cyan("Running deploy command")
 			d.ResetChanges(repositoryPath)
 			d.SearchAndReplace(oldUrl, newUrl, repositoryPath)
-			d.Deploy(repositoryPath)
 
+			command := exec.Command("docker-compose", "up", "--build")
+			c.Run(command, "docker-compose up", true, repositoryPath)
+
+		},
+	}
+
+	var certsCmd = &cobra.Command{
+		Use:     "certs",
+		Short:   "fetches new SSL certificates",
+		Long:    "To be used on initial deployments -- generates new SSL certificates for your new env",
+		Version: version,
+		Args:    cobra.MinimumNArgs(0),
+		Run: func(cmd *cobra.Command, args []string) {
+
+			color.Cyan("Running certs command")
+
+			color.Green("Downloading recommended TLS files")
+			c.GetFile(
+				"https://raw.githubusercontent.com/certbot/certbot/master/certbot-nginx/certbot_nginx/_internal/tls_configs/options-ssl-nginx.conf",
+				"data/conf/", "options-ssl-nginx.conf")
+			c.GetFile(
+				"https://raw.githubusercontent.com/certbot/certbot/master/certbot/certbot/ssl-dhparams.pem",
+				"data/conf/", "ssl-dhparams.pem")
+
+			color.Green("Creating dummy certificates")
+
+			keysPath := filepath.Join("/etc/letsencrypt/live", domain)
+			privPath := filepath.Join(keysPath, "privkey.pem")
+			fullchainPath := filepath.Join(keysPath, "fullchain.pem")
+
+			pathInVolume := filepath.Join("data/conf/live/", domain)
+			err := os.MkdirAll(pathInVolume, os.ModePerm)
+			if err != nil {
+				color.Red("Could not create directory %s", pathInVolume)
+				log.Fatal(err)
+			}
+
+			entrypoint := fmt.Sprintf("\"openssl req -x509 -nodes -newkey rsa:4096 -days 1 -keyout '%s' -out '%s' -subj '/CN=localhost'\"", privPath, fullchainPath)
+
+			toRun := exec.Command("docker-compose", "run", "--rm", "entrypoint", entrypoint, "certbot")
+			c.Run(toRun, "docker-compose run with custom entrypoint", false, repositoryPath)
+
+			color.Green("Booting up nginx")
+			toRun = exec.Command("docker-compose", "up", "--force-recreate", "-d", "nginx")
+			c.Run(toRun, "docker-compose up -d nginx", false, repositoryPath)
+
+			color.Green("Deleting dummy certificates")
+			entrypoint = fmt.Sprintf("\"rm -Rf /etc/letsencrypt/live/%s && rm -Rf /etc/letsencrypt/archive/%s && rm -Rf /etc/letsencrypt/renewal/%s.conf\"", domain, domain, domain)
+			toRun = exec.Command("docker-compose", "run", "--rm", "--entrypoint", entrypoint, "certbot")
+			c.Run(toRun, "docker-compose run with custom entrypoint", false, repositoryPath)
+
+			color.Green("Requesting real certificates")
+			entrypoint = fmt.Sprintf("\"certbot certonly --webroot -w /var/www/certbot -email %s -d %s --rsa-key-size 4096 --agree-tos --force-renewal\"", email, domain)
+			toRun = exec.Command("docker-compose", "run", "--rm", "entrypoint", entrypoint, "certbot")
+			c.Run(toRun, "docker-compose run with custom entrypoint", false, repositoryPath)
+
+			color.Green("Reloading nginx")
+			toRun = exec.Command("docker-compose", "exec", "nginx", "nginx", "-s", "reload")
+			c.Run(toRun, "docker-compose run with custom entrypoint", true, repositoryPath)
 		},
 	}
 
@@ -130,7 +194,10 @@ func main() {
 	cloneCmd.Flags().StringVarP(&repositoryPath, "path", "p", ".", "repository path")
 	cloneCmd.Flags().StringVarP(&repoUrl, "url", "u", "https://gitlab.com/zenith-hr/TIMESHEET.git", "git clone url")
 
-	cloneCmd.AddCommand(deployCmd, releaseCmd)
+	certsCmd.Flags().StringVarP(&domain, "url", "u", "timesheet.zenith-rh.com", "domain of your new environment")
+	certsCmd.Flags().StringVarP(&email, "email", "e", "backoffice@zenith-rh.com", "renewal email")
+
+	cloneCmd.AddCommand(deployCmd, releaseCmd, certsCmd)
 
 	if err := cloneCmd.Execute(); err != nil {
 		panic(err)
