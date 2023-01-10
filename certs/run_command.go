@@ -17,7 +17,7 @@ func Run(cmd *exec.Cmd, name string, isInteractive bool, path string) {
 	cmd.Dir = path
 
 	/* Running in one go without any out logging */
-	if isInteractive {
+	if isInteractive == true {
 		_, err := cmd.CombinedOutput()
 		if err != nil {
 			color.Red("%s\n", err)
