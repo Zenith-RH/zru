@@ -26,7 +26,7 @@ func Run(cmd *exec.Cmd, name string, isInteractive bool, path string) {
 		return
 	}
 
-    color.Cyan("Runnig command interactively. Press SPACE to detach...")
+    color.Cyan("Running command interactively. Press SPACE to detach...")
 
     /* Getting output pipes */
 
