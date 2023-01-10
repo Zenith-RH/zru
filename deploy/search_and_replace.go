@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 
@@ -118,4 +119,14 @@ func SearchAndReplace(search string, replace string, dir string) {
 		fmt.Println(err)
 		return
 	}
+
+	color.Green("Git status:")
+	cmd := exec.Command("git", "status")
+	cmd.Dir = absPath
+	output, err := cmd.Output()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(string(output))
 }
