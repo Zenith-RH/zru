@@ -122,7 +122,6 @@ func main() {
 			}
 
 			entrypoint := fmt.Sprintf("\"openssl req -x509 -nodes -newkey rsa:4096 -days 1 -keyout '%s' -out '%s' -subj '/CN=localhost'\"", privPath, fullchainPath)
-
 			toRun := exec.Command("docker-compose", "run", "--rm", "entrypoint", entrypoint, "certbot")
 			c.Run(toRun, "docker-compose run with custom entrypoint", false, repositoryPath)
 
@@ -133,16 +132,16 @@ func main() {
 			color.Green("Deleting dummy certificates")
 			entrypoint = fmt.Sprintf("\"rm -Rf /etc/letsencrypt/live/%s && rm -Rf /etc/letsencrypt/archive/%s && rm -Rf /etc/letsencrypt/renewal/%s.conf\"", domain, domain, domain)
 			toRun = exec.Command("docker-compose", "run", "--rm", "--entrypoint", entrypoint, "certbot")
-			c.Run(toRun, "docker-compose run with custom entrypoint", false, repositoryPath)
+			c.Run(toRun, "docker-compose rm certs", false, repositoryPath)
 
 			color.Green("Requesting real certificates")
 			entrypoint = fmt.Sprintf("\"certbot certonly --webroot -w /var/www/certbot -email %s -d %s --rsa-key-size 4096 --agree-tos --force-renewal\"", email, domain)
-			toRun = exec.Command("docker-compose", "run", "--rm", "entrypoint", entrypoint, "certbot")
-			c.Run(toRun, "docker-compose run with custom entrypoint", false, repositoryPath)
+			toRun = exec.Command("echo", "yes", "|", "docker-compose", "run", "--rm", "entrypoint", entrypoint, "certbot")
+			c.Run(toRun, "docker-compose run certbot", false, repositoryPath)
 
 			color.Green("Reloading nginx")
 			toRun = exec.Command("docker-compose", "exec", "nginx", "nginx", "-s", "reload")
-			c.Run(toRun, "docker-compose run with custom entrypoint", true, repositoryPath)
+			c.Run(toRun, "docker-compose run nginx -s reload", true, repositoryPath)
 		},
 	}
 

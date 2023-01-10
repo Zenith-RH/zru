@@ -57,6 +57,7 @@ Usage:
   clone [command]
 
 Available Commands:
+  certs       fetches new SSL certificates
   completion  Generate the autocompletion script for the specified shell
   deploy      deploys the Zenith timesheet tool
   help        Help about any command
@@ -134,7 +135,6 @@ Usage:
 
 Available Commands:
   completion  Generate the autocompletion script for the specified shell
-  deploy      deploys the Zenith timesheet tool
   help        Help about any command
 
 Flags:
