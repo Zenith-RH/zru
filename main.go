@@ -85,9 +85,9 @@ func main() {
 			d.SearchAndReplace(oldUrl, newUrl, repositoryPath)
 
 			command := exec.Command("docker-compose", "down")
-			c.Run(command, "docker-compose down", true, repositoryPath)
+			c.Run(command, "docker-compose down", false, repositoryPath)
 
-			command = exec.Command("docker-compose", "up", "--build")
+			command = exec.Command("docker-compose", "up", "--build", "-d")
 			c.Run(command, "docker-compose up", true, repositoryPath)
 
 		},
