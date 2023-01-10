@@ -24,7 +24,7 @@ docker: ## build a local docker image
 
 .PHONY: install
 install: compile ## install the application locally
-	@mv $TARGET /usr/local/bin/
+	@mv $(TARGET) /usr/local/bin/
 	@echo "[+] Successfully installed to /usr/local/bin/$(TARGET)"
 
 .PHONY: pull
