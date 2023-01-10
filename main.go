@@ -121,7 +121,7 @@ func main() {
 			}
 
 			entrypoint := fmt.Sprintf("\"openssl req -x509 -nodes -newkey rsa:4096 -days 1 -keyout '%s' -out '%s' -subj '/CN=localhost'\"", privPath, fullchainPath)
-			toRun := exec.Command("docker-compose", "run", "--rm", "entrypoint", entrypoint, "certbot")
+			toRun := exec.Command("docker-compose", "run", "--rm", "--entrypoint", entrypoint, "certbot")
 			c.Run(toRun, "docker-compose run with custom entrypoint", false, repositoryPath)
 
 			color.Green("Booting up nginx")
@@ -135,7 +135,7 @@ func main() {
 
 			color.Green("Requesting real certificates")
 			entrypoint = fmt.Sprintf("\"certbot certonly --webroot -w /var/www/certbot -email %s -d %s --rsa-key-size 4096 --agree-tos --force-renewal\"", email, domain)
-			toRun = exec.Command("echo", "yes", "|", "docker-compose", "run", "--rm", "entrypoint", entrypoint, "certbot")
+			toRun = exec.Command("echo", "yes", "|", "docker-compose", "run", "--rm", "--entrypoint", entrypoint, "certbot")
 			c.Run(toRun, "docker-compose run certbot", false, repositoryPath)
 
 			color.Green("Reloading nginx")
