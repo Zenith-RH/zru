@@ -105,10 +105,10 @@ func main() {
 			color.Green("Downloading recommended TLS files")
 			c.GetFile(
 				"https://raw.githubusercontent.com/certbot/certbot/master/certbot-nginx/certbot_nginx/_internal/tls_configs/options-ssl-nginx.conf",
-				"data/conf/", "options-ssl-nginx.conf")
+				"data/certbot/conf/", "options-ssl-nginx.conf")
 			c.GetFile(
 				"https://raw.githubusercontent.com/certbot/certbot/master/certbot/certbot/ssl-dhparams.pem",
-				"data/conf/", "ssl-dhparams.pem")
+				"data/certbot/conf/", "ssl-dhparams.pem")
 
 			color.Green("Creating dummy certificates")
 
