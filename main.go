@@ -41,7 +41,7 @@ var (
 */
 
 func main() {
-	var version = "0.0.1"
+	var version = "0.0.2"
 
 	var releaseCmd = &cobra.Command{
 		Use:     "release",
@@ -50,7 +50,6 @@ func main() {
 		Version: version,
 		Args:    cobra.MinimumNArgs(0),
 		Run: func(cmd *cobra.Command, args []string) {
-
 			color.Cyan("Running Release command")
 
 			color.Cyan("Fetching update from both remotes...")
@@ -76,12 +75,10 @@ func main() {
 		Version: version,
 		Args:    cobra.MinimumNArgs(0),
 		Run: func(cmd *cobra.Command, args []string) {
-
-			/* fetch, switch to branch & stop docker */
-			/* add option to completely nuke the repository if needed */
-
 			color.Cyan("Running deploy command")
+
 			d.ResetChanges(repositoryPath)
+			r.Pull(repositoryPath)
 			d.SearchAndReplace(oldUrl, newUrl, repositoryPath)
 
 			command := exec.Command("docker-compose", "down")
@@ -100,7 +97,6 @@ func main() {
 		Version: version,
 		Args:    cobra.MinimumNArgs(0),
 		Run: func(cmd *cobra.Command, args []string) {
-
 			color.Cyan("Running certs command")
 
 			color.Green("Downloading recommended TLS files")
@@ -155,6 +151,7 @@ func main() {
 		Version: version,
 		Args:    cobra.MinimumNArgs(0),
 		Run: func(cmd *cobra.Command, args []string) {
+			color.Cyan("Running clone command")
 
 			r, err := git.PlainClone(repositoryPath, false, &git.CloneOptions{
 				URL:               repoUrl,

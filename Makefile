@@ -24,9 +24,15 @@ docker: ## build a local docker image
 
 .PHONY: install
 install: compile ## install the application locally
-	@go install
-	@echo "[+] Successfully installed to $(GOPATH)/$(TARGET)"
+	@mv $TARGET /usr/local/bin/
+	@echo "[+] Successfully installed to /usr/local/bin/$(TARGET)"
 
+.PHONY: pull
+pull:
+	@git pull
+
+.PHONY: update
+update: pull tidy install ## pulls new version and installs it
 
 .PHONE: tidy
 tidy: ## runs gofmt & go mod tidy

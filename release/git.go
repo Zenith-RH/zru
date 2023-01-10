@@ -39,6 +39,20 @@ func repo(path string) *git.Repository {
 	return r
 }
 
+func Pull(path string) {
+
+	w := worktree(path)
+
+	err := w.Pull(&git.PullOptions{RemoteName: "origin"})
+	if err != nil {
+		fmt.Println("Could run git pull")
+		log.Fatal(err)
+	}
+
+	color.Cyan("[+] Fetched last updates")
+
+}
+
 func SwitchBranch(remote string, branch string, path string) {
 	wk := worktree(path)
 

@@ -122,11 +122,13 @@ func SearchAndReplace(search string, replace string, dir string) {
 
 	color.Green("Git status:")
 	cmd := exec.Command("git", "status")
+
 	cmd.Dir = absPath
 	output, err := cmd.Output()
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
+
 	fmt.Println(string(output))
 }
