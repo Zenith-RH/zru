@@ -42,7 +42,7 @@ func downloadFile(filepath string, url string) (err error) {
 }
 
 func GetFile(url string, dirpath string, filename string) {
-	err := os.MkdirAll(dirpath, os.ModeAppend)
+	err := os.MkdirAll(dirpath, 0666)
 	if err != nil {
 		color.Red("Could not create directory %s", dirpath)
 		log.Fatal(err)
