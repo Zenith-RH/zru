@@ -137,7 +137,7 @@ func main() {
 			c.Run(toRun, "docker-compose rm certs", false, repositoryPath)
 
 			color.Green("Requesting real certificates")
-			entrypoint = fmt.Sprintf("certbot certonly --webroot -w /var/www/certbot -email %s -d %s --rsa-key-size 4096 --agree-tos --force-renewal", email, domain)
+			entrypoint = fmt.Sprintf("certbot certonly --webroot -w /var/www/certbot --email %s -d %s --rsa-key-size 4096 --agree-tos --force-renewal", email, domain)
 			toRun = exec.Command("echo", "yes", "|", "docker-compose", "run", "--rm", "--entrypoint", entrypoint, "certbot")
 			c.Run(toRun, "docker-compose run certbot", false, repositoryPath)
 
