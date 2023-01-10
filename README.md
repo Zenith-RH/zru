@@ -47,6 +47,8 @@ docker build . -t zru
 
 ### clone
 
+Clones a repository. Mainly used for CI, but could be useful for you too.
+
 ```bash
 clones a repository recursively and print latest commit hash
 
@@ -74,7 +76,31 @@ Example:
 zru clone --url git@gitlab.com:bogdzn/zru.git --path /tmp/zru
 ```
 
+### certs
+
+Generates SSL certificates for a new environment. Use this before deployment to avoid an `nginx` crash.
+
+```bash
+To be used on initial deployments -- generates new SSL certificates for your new env
+
+Usage:
+  clone certs [flags]
+
+Flags:
+  -e, --email string   renewal email (default "backoffice@zenith-rh.com")
+  -h, --help           help for certs
+  -u, --url string     domain of your new environment (default "timesheet.zenith-rh.com")
+  -v, --version        version for certs
+```
+
+Example:
+```bash
+zru certs --email myemail@email.com --url example.com
+```
+
 ### deploy
+
+Renames all occurences of `oldUrl` to the correct url for the environment, then pulls up the infrastructure through docker-compose.
 
 ```bash
 wraps around docker-compose to deploy the various services
@@ -96,6 +122,8 @@ zru deploy --url some-url.com --path repository
 ```
 
 ### release
+
+Prepares a release from repository to repository.
 
 ```bash
 creates target branch from source branch & pushes it to new remote/branch for software releases
@@ -128,5 +156,4 @@ zru release --path ./repository --remote backup --branch backup-$(date +%s) --sr
 
 ## Roadmap
 
-- [ ] being able to fetch certificates for new environments
 - [ ] integration into gitlab ci
