@@ -56,17 +56,26 @@ func Run(cmd *exec.Cmd, name string, isInteractive bool, path string) {
 	go io.Copy(os.Stdout, stdout)
 	go io.Copy(os.Stderr, stderr)
 
-	/* read input with bufio */
+	done := make(chan error, 1)
+	go func() {
+		done <- cmd.Wait()
+	}()
 
 	reader := bufio.NewReader(os.Stdin)
 	for {
+		select {
+		case <-done:
+			color.Green("[+] Command finished successfully.")
+			return
+		default:
+		}
+
 		char, _, err := reader.ReadRune()
 		if err != nil {
 			color.Red("Error reading user input")
 			log.Fatal(err)
 		}
 		if char == ' ' {
-			/* detaching from process */
 			cmd.Process.Release()
 			return
 		}
