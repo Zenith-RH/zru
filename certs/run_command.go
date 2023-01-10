@@ -3,7 +3,9 @@ package zru
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"log"
+	"os"
 	"os/exec"
 
 	"github.com/fatih/color"
@@ -24,35 +26,51 @@ func Run(cmd *exec.Cmd, name string, isInteractive bool, path string) {
 		return
 	}
 
-	// Get the stdout pipe
+	color.Cyan("Runnig command interactively. Press SPACE to detach...")
+
+	/* Getting output pipes */
+
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
-		color.Red("Could not get StdoutPipe")
+		color.Red("Error stdin pipe")
 		log.Fatal(err)
+
+		fmt.Println(err)
+		return
+	}
+	stderr, err := cmd.StderrPipe()
+	if err != nil {
+		color.Red("Error getting stderr pipe")
+		log.Fatal(err)
+
+		fmt.Println(err)
 		return
 	}
 
-	// Start the command
+	/* starting command & storing outputs in pipes */
+
 	if err := cmd.Start(); err != nil {
-		color.Red("Could not start command")
+		color.Red("Error starting command")
 		log.Fatal(err)
 	}
+	go io.Copy(os.Stdout, stdout)
+	go io.Copy(os.Stderr, stderr)
 
-	// Use a scanner to read the output line by line
-	scanner := bufio.NewScanner(stdout)
-	for scanner.Scan() {
-		fmt.Println(scanner.Text())
-	}
-	if err := scanner.Err(); err != nil {
-		color.Red("Could not start command")
-		log.Fatal(err)
-	}
+	/* read input with bufio */
 
-	// Wait for the command to finish
-	if err := cmd.Wait(); err != nil {
-		color.Red("Could not start command")
-		log.Fatal(err)
-	}
+	reader := bufio.NewReader(os.Stdin)
+	for {
+		char, _, err := reader.ReadRune()
+		if err != nil {
+			color.Red("Error reading user input")
+			log.Fatal(err)
+		}
+		if char == ' ' {
+			/* detaching from process */
+			cmd.Process.Release()
+			return
+		}
 
-	color.Green("[+] Success")
+		color.Green("[+] Success!")
+	}
 }
