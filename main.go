@@ -137,15 +137,17 @@ func main() {
 			c.RunHeadless(toRun, "docker-compose rm certs", repositoryPath)
 
 			color.Green("Requesting real certificates")
-			entrypoint = fmt.Sprintf("certbot certonly --webroot -w /var/www/certbot --email %s -d %s --rsa-key-size 4096 --agree-tos --force-renewal", email, domain)
-			toRun = exec.Command("echo", "yes", "|", "docker-compose", "run", "--rm", "--entrypoint", entrypoint, "certbot")
+			entrypoint = fmt.Sprintf("certbot certonly --webroot -w /var/www/certbot --email %s -d %s --rsa-key-size 4096 --agree-tos --force-renewal --non-interactive", email, domain)
+			toRun = exec.Command("docker-compose", "run", "--rm", "--entrypoint", entrypoint, "certbot")
 			c.RunHeadless(toRun, "docker-compose run certbot", repositoryPath)
 
 			color.Green("Reloading nginx")
 			toRun = exec.Command("docker-compose", "exec", "nginx", "nginx", "-s", "reload")
-			c.Run(toRun, "docker-compose run nginx -s reload", repositoryPath)
+			c.RunHeadless(toRun, "docker-compose run nginx -s reload", repositoryPath)
 
 			color.Green("SSL setup done -- rebuilding application")
+			toRun = exec.Command("docker-compose", "down")
+			c.RunHeadless(toRun, "docker-compose down", repositoryPath)
 			toRun = exec.Command("docker-compose", "up", "--build")
 			c.Run(toRun, "docker-compose up --build", repositoryPath)
 		},
