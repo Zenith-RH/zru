@@ -1,3 +1,6 @@
+
+image: golang:latest
+
 stages:
   - test
   - build
