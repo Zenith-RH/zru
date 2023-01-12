@@ -41,7 +41,7 @@ var (
 */
 
 func main() {
-	var version = "0.0.2"
+	var version = "0.0.3"
 
 	var releaseCmd = &cobra.Command{
 		Use:     "release",
@@ -80,15 +80,15 @@ func main() {
 			d.ResetChanges(repositoryPath)
 
 			command := exec.Command("git", "pull")
-			c.Run(command, "git pull", false, repositoryPath)
+			c.RunHeadless(command, "git pull", repositoryPath)
 
 			d.SearchAndReplace(oldUrl, newUrl, repositoryPath)
 
 			command = exec.Command("docker-compose", "down")
-			c.Run(command, "docker-compose down", false, repositoryPath)
+			c.RunHeadless(command, "docker-compose down", repositoryPath)
 
 			command = exec.Command("docker-compose", "up", "--build", "-d")
-			c.Run(command, "docker-compose up", true, repositoryPath)
+			c.Run(command, "docker-compose up", repositoryPath)
 
 		},
 	}
@@ -125,25 +125,29 @@ func main() {
 
 			entrypoint := fmt.Sprintf("openssl req -x509 -nodes -newkey rsa:4096 -days 1 -keyout '%s' -out '%s' -subj '/CN=localhost'", privPath, fullchainPath)
 			toRun := exec.Command("docker-compose", "run", "--rm", "--entrypoint", entrypoint, "certbot")
-			c.Run(toRun, "docker-compose run create key", false, repositoryPath)
+			c.RunHeadless(toRun, "docker-compose run create key", repositoryPath)
 
 			color.Green("Booting up nginx")
 			toRun = exec.Command("docker-compose", "up", "--force-recreate", "-d", "nginx")
-			c.Run(toRun, "docker-compose up -d nginx", false, repositoryPath)
+			c.RunHeadless(toRun, "docker-compose up -d nginx", repositoryPath)
 
 			color.Green("Deleting dummy certificates")
 			entrypoint = fmt.Sprintf("rm -Rf /etc/letsencrypt/live/%s && rm -Rf /etc/letsencrypt/archive/%s && rm -Rf /etc/letsencrypt/renewal/%s.conf", domain, domain, domain)
 			toRun = exec.Command("docker-compose", "run", "--rm", "--entrypoint", entrypoint, "certbot")
-			c.Run(toRun, "docker-compose rm certs", false, repositoryPath)
+			c.RunHeadless(toRun, "docker-compose rm certs", repositoryPath)
 
 			color.Green("Requesting real certificates")
 			entrypoint = fmt.Sprintf("certbot certonly --webroot -w /var/www/certbot --email %s -d %s --rsa-key-size 4096 --agree-tos --force-renewal", email, domain)
 			toRun = exec.Command("echo", "yes", "|", "docker-compose", "run", "--rm", "--entrypoint", entrypoint, "certbot")
-			c.Run(toRun, "docker-compose run certbot", false, repositoryPath)
+			c.RunHeadless(toRun, "docker-compose run certbot", repositoryPath)
 
 			color.Green("Reloading nginx")
 			toRun = exec.Command("docker-compose", "exec", "nginx", "nginx", "-s", "reload")
-			c.Run(toRun, "docker-compose run nginx -s reload", true, repositoryPath)
+			c.Run(toRun, "docker-compose run nginx -s reload", repositoryPath)
+
+			color.Green("SSL setup done -- rebuilding application")
+			toRun = exec.Command("docker-compose", "up", "--build")
+			c.Run(toRun, "docker-compose up --build", repositoryPath)
 		},
 	}
 

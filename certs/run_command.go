@@ -11,20 +11,22 @@ import (
 	"github.com/fatih/color"
 )
 
-func Run(cmd *exec.Cmd, name string, isInteractive bool, path string) {
+func RunHeadless(cmd *exec.Cmd, name string, path string) {
 	color.Cyan("Running %s", name)
 
 	cmd.Dir = path
 
-	/* Running in one go without any out logging */
-	if isInteractive == true {
-		_, err := cmd.CombinedOutput()
-		if err != nil {
-			color.Red("%s\n", err)
-		}
-		color.Green("[+] Success\n")
-		return
+	_, err := cmd.CombinedOutput()
+	if err != nil {
+		color.Red("%s\n", err)
 	}
+	color.Green("[+] Success\n")
+
+}
+
+func Run(cmd *exec.Cmd, name string, path string) {
+	color.Cyan("Running %s", name)
+	cmd.Dir = path
 
 	color.Cyan("Running command interactively. Press ENTER to detach...")
 
