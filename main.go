@@ -41,7 +41,7 @@ var (
 */
 
 func main() {
-	var version = "0.0.3"
+    var version = "0.0.4"
 
 	var releaseCmd = &cobra.Command{
 		Use:     "release",
@@ -207,7 +207,10 @@ func main() {
 			color.Cyan("Running nuke command")
 
 			color.Green("Stopping and removing all docker images")
-            toRun := exec.Command("docker", "stop", "$(docker ps -aq)")
+
+            toRun := exec.Command("docker-compose", "down")
+			c.RunHeadless(toRun, "docker-compose down", repositoryPath)
+            toRun = exec.Command("docker", "stop", "$(docker ps -aq)")
 			c.RunHeadless(toRun, "docker stop $(docker ps -aq)", repositoryPath)
             toRun = exec.Command("docker", "rm", "$(docker ps -aq)")
 			c.RunHeadless(toRun, "docker rm $(docker ps -aq)", repositoryPath)
