@@ -197,6 +197,33 @@ func main() {
 		},
 	}
 
+    var nukeCmd = &cobra.Command{
+		Use:     "nuke",
+		Short:   "nukes docker volumes, images, & everything",
+		Long:    "destroys all deployment config for dev purposes",
+		Version: version,
+		Args:    cobra.MinimumNArgs(0),
+		Run: func(cmd *cobra.Command, args []string) {
+			color.Cyan("Running nuke command")
+
+			color.Green("Stopping and removing all docker images")
+            toRun := exec.Command("docker", "stop", "$(docker ps -aq)")
+			c.RunHeadless(toRun, "docker stop $(docker ps -aq)", repositoryPath)
+            toRun = exec.Command("docker", "rm", "$(docker ps -aq)")
+			c.RunHeadless(toRun, "docker rm $(docker ps -aq)", repositoryPath)
+            toRun = exec.Command("docker", "image", "prune", "-a", "f")
+			c.RunHeadless(toRun, "docker image prune -a -f", repositoryPath)
+
+            color.Green("Removing volumes and networks")
+            toRun = exec.Command("docker", "volume", "prune", "f")
+			c.RunHeadless(toRun, "docker volume prune -f", repositoryPath)
+            toRun = exec.Command("docker", "network", "prune", "f")
+			c.RunHeadless(toRun, "docker network prune -f", repositoryPath)
+
+            color.Green("[+] Done")
+		},
+	}
+
 	releaseCmd.Flags().StringVarP(&targetRemote, "remote", "e", "customer", "git remote target")
 	releaseCmd.Flags().StringVarP(&targetBranch, "target-branch", "t", "release", "branch to deliver release to")
 	releaseCmd.Flags().StringVarP(&srcRemote, "src-remote", "r", "origin", "git remote source")
@@ -213,7 +240,7 @@ func main() {
 	certsCmd.Flags().StringVarP(&domain, "url", "u", "timesheet.zenith-rh.com", "domain of your new environment")
 	certsCmd.Flags().StringVarP(&email, "email", "e", "backoffice@zenith-rh.com", "renewal email")
 
-	cloneCmd.AddCommand(deployCmd, releaseCmd, certsCmd)
+	cloneCmd.AddCommand(deployCmd, releaseCmd, certsCmd, nukeCmd)
 
 	if err := cloneCmd.Execute(); err != nil {
 		panic(err)

@@ -64,6 +64,7 @@ Available Commands:
   completion  Generate the autocompletion script for the specified shell
   deploy      deploys the Zenith timesheet tool
   help        Help about any command
+  nuke        nukes docker volumes, images, & everything
   release     delivers code release across repositories
 
 Flags:
@@ -78,6 +79,26 @@ Use "clone [command] --help" for more information about a command.
 Example:
 ```bash
 zru clone --url git@gitlab.com:bogdzn/zru.git --path /tmp/zru
+```
+
+### nuke
+
+Deletes docker-compose setup from existence. **Use only on development servers**
+
+```bash
+destroys all deployment config for dev purposes
+
+Usage:
+  clone nuke [flags]
+
+Flags:
+  -h, --help      help for nuke
+  -v, --version   version for nuke
+```
+
+Example:
+```bash
+zru nuke
 ```
 
 ### certs
