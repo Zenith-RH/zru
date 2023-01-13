@@ -108,6 +108,8 @@ func main() {
 		Run: func(cmd *cobra.Command, args []string) {
 			color.Cyan("Running certs command")
 
+			d.SearchAndReplace(oldUrl, domain, repositoryPath)
+
 			color.Green("Downloading recommended TLS files")
 			c.GetFile(
 				"https://raw.githubusercontent.com/certbot/certbot/master/certbot-nginx/certbot_nginx/_internal/tls_configs/options-ssl-nginx.conf",
@@ -135,7 +137,7 @@ func main() {
 
 			color.Green("Booting up nginx")
 			toRun = exec.Command("docker-compose", "up", "--force-recreate", "-d", "nginx")
-			c.RunHeadless(toRun, "docker-compose up -d nginx", repositoryPath)
+			c.RunHeadless(toRun, "docker-compose up nginx -d", repositoryPath)
 
 			color.Green("Deleting dummy certificates")
 			entrypoint = fmt.Sprintf("rm -Rf /etc/letsencrypt/live/%s && rm -Rf /etc/letsencrypt/archive/%s && rm -Rf /etc/letsencrypt/renewal/%s.conf", domain, domain, domain)
@@ -149,13 +151,13 @@ func main() {
 
 			color.Green("Reloading nginx")
 			toRun = exec.Command("docker-compose", "exec", "nginx", "nginx", "-s", "reload")
-			c.RunHeadless(toRun, "docker-compose run nginx -s reload", repositoryPath)
+			c.RunHeadless(toRun, "docker-compose exec nginx nginx -s reload", repositoryPath)
 
 			color.Green("SSL setup done -- rebuilding application")
 			toRun = exec.Command("docker-compose", "down")
 			c.RunHeadless(toRun, "docker-compose down", repositoryPath)
 			toRun = exec.Command("docker-compose", "up", "--build", "-d")
-			c.Run(toRun, "docker-compose up --build", repositoryPath)
+			c.Run(toRun, "docker-compose up --build -d", repositoryPath)
 		},
 	}
 
