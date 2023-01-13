@@ -19,6 +19,7 @@ func RunHeadless(cmd *exec.Cmd, name string, path string) {
 	_, err := cmd.CombinedOutput()
 	if err != nil {
 		color.Red("%s\n", err)
+		os.Exit(1)
 	}
 	color.Green("[+] Success\n")
 

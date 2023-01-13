@@ -57,13 +57,19 @@ func main() {
 			r.FetchFromRemote(targetRemote, repositoryPath)
 
 			color.Cyan("Switching to %s", srcBranch)
-			r.SwitchBranch(srcRemote, srcBranch, repositoryPath)
+			toRun := exec.Command("git", "checkout", srcRemote+"/"+srcBranch)
+			c.RunHeadless(toRun, "git checkout remote/branch", repositoryPath)
 
 			color.Cyan("Creating new %s branch on remote %s", targetBranch, targetRemote)
-			r.SwitchBranch(targetRemote, targetBranch, repositoryPath)
+			toRun = exec.Command("git", "checkout", "-b", targetRemote+"/"+targetBranch)
+			c.RunHeadless(toRun, "git checkout -b targetRemote/targetBranch", repositoryPath)
 
 			color.Cyan("Creating Release commit and pushing to %s", targetRemote)
-			r.CommitAndPush(targetRemote, targetBranch, repositoryPath)
+			toRun = exec.Command("git", "commit", "-m", "\"New release available\"")
+			c.RunHeadless(toRun, "git commit", repositoryPath)
+
+			toRun = exec.Command("git", "push", "-u", targetRemote, targetBranch)
+			c.RunHeadless(toRun, "git push", repositoryPath)
 
 		},
 	}

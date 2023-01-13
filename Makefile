@@ -23,9 +23,9 @@ docker: ## build a local docker image
 	@docker build --network host . -t zru:latest
 
 .PHONY: install
-install: compile ## install the application locally
-	@mv $(TARGET) /usr/local/bin/
-	@echo "[+] Successfully installed to /usr/local/bin/$(TARGET)"
+install: ## install the application locally
+	@go install
+	@echo "[+] Successfully installed to $(value GOPATH)/bin/$(TARGET)"
 
 .PHONY: pull
 pull:
