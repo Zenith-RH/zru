@@ -210,10 +210,6 @@ func main() {
 
             toRun := exec.Command("docker-compose", "down")
 			c.RunHeadless(toRun, "docker-compose down", repositoryPath)
-            toRun = exec.Command("docker", "stop", "$(docker ps -aq)")
-			c.RunHeadless(toRun, "docker stop $(docker ps -aq)", repositoryPath)
-            toRun = exec.Command("docker", "rm", "$(docker ps -aq)")
-			c.RunHeadless(toRun, "docker rm $(docker ps -aq)", repositoryPath)
             toRun = exec.Command("docker", "image", "prune", "-a", "f")
 			c.RunHeadless(toRun, "docker image prune -a -f", repositoryPath)
 
