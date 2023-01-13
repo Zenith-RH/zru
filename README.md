@@ -16,6 +16,9 @@ make
 
 # deploy
 ./zru deploy --url https://some-url.com --path repository
+
+# request SSL certs on first deployment
+./zru certs --email myemail@email.com --url example.com
 ```
 
 > You can also run `make help` to check makefile rules
@@ -153,7 +156,3 @@ Example:
 ```bash
 zru release --path ./repository --remote backup --branch backup-$(date +%s) --src-branch develop
 ```
-
-## Roadmap
-
-- [ ] integration into gitlab ci
