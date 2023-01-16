@@ -63,11 +63,11 @@ func main() {
 			c.RunHeadless(toRun, "git checkout remote/branch", repositoryPath)
 
 			color.Cyan("Creating new %s branch on remote %s", targetBranch, targetRemote)
-			toRun = exec.Command("git", "checkout", "-b", targetRemote+"/"+targetBranch)
+			toRun = exec.Command("git", "checkout", "-b", targetBranch)
 			c.RunHeadless(toRun, "git checkout -b targetRemote/targetBranch", repositoryPath)
 
-			toRun = exec.Command("git", "push", "-u", targetRemote, targetBranch)
-			c.RunHeadless(toRun, "git push", repositoryPath)
+			toRun = exec.Command("git", "push", "-f", "-u", targetRemote, targetBranch)
+			c.RunHeadless(toRun, "git push -f", repositoryPath)
 
 		},
 	}
