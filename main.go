@@ -54,21 +54,21 @@ func main() {
 		Run: func(cmd *cobra.Command, args []string) {
 			color.Cyan("Running Release command")
 
-			color.Cyan("Fetching update from both remotes...")
+			color.Cyan("\nFetching update from both remotes...")
 			r.FetchFromRemote(srcRemote, repositoryPath)
 			r.FetchFromRemote(targetRemote, repositoryPath)
 
-			color.Cyan("Switching to %s", srcBranch)
-			toRun := exec.Command("git", "checkout", srcRemote+"/"+srcBranch)
-			c.RunHeadless(toRun, "git checkout remote/branch", repositoryPath)
+            toRun := exec.Command("git", "pull")
+			c.RunHeadless(toRun, "git pull", repositoryPath)
 
-			color.Cyan("Creating new %s branch on remote %s", targetBranch, targetRemote)
-			toRun = exec.Command("git", "checkout", "-b", targetBranch)
-			c.RunHeadless(toRun, "git checkout -b targetRemote/targetBranch", repositoryPath)
+            toRun = exec.Command("git", "switch", srcBranch)
+			c.RunHeadless(toRun, "git switch srcBranch", repositoryPath)
 
-			toRun = exec.Command("git", "push", "-f", "-u", targetRemote, targetBranch)
-			c.RunHeadless(toRun, "git push -f", repositoryPath)
+			toRun = exec.Command("git", "switch", "-c", targetBranch)
+			c.RunHeadless(toRun, "git switch -c targetBranch", repositoryPath)
 
+            toRun = exec.Command("git", "push", "-u", targetRemote, targetBranch, "-f")
+            c.RunHeadless(toRun, "git push targetRemote targetBranch -f", repositoryPath)
 		},
 	}
 
