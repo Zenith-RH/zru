@@ -32,11 +32,13 @@ var (
 
 /*
 
-   There are 3 commands that are supported by zru:
+   There are 5 commands that are supported by zru:
 
    - release: creates a branch /release from master, & pushes it to a new origin for software releases
    - deploy: renames URL in relevant places & deploys the application through docker-compose
    - certs: initiates ssl certficates for the application
+   - clone: git clones a bare repository
+   - nuke: destroys an infrastructure, and resets it
 
 */
 
@@ -63,10 +65,6 @@ func main() {
 			color.Cyan("Creating new %s branch on remote %s", targetBranch, targetRemote)
 			toRun = exec.Command("git", "checkout", "-b", targetRemote+"/"+targetBranch)
 			c.RunHeadless(toRun, "git checkout -b targetRemote/targetBranch", repositoryPath)
-
-			color.Cyan("Creating Release commit and pushing to %s", targetRemote)
-			toRun = exec.Command("git", "commit", "-m", "\"New release available\"")
-			c.RunHeadless(toRun, "git commit", repositoryPath)
 
 			toRun = exec.Command("git", "push", "-u", targetRemote, targetBranch)
 			c.RunHeadless(toRun, "git push", repositoryPath)
