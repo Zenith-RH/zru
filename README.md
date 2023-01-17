@@ -15,7 +15,7 @@ make
 ./zru release --path ./repository --remote backup --branch backup-$(date +%s) --src-branch develop
 
 # deploy
-./zru deploy --url https://some-url.com --path repository
+./zru deploy --url some-url.com --path repository
 
 # request SSL certs on first deployment
 ./zru certs --email myemail@email.com --url example.com
