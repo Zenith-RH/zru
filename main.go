@@ -155,7 +155,11 @@ func main() {
 			toRun = exec.Command("docker-compose", "down")
 			c.RunHeadless(toRun, "docker-compose down", repositoryPath)
 			toRun = exec.Command("docker-compose", "up", "--build", "-d")
-			c.Run(toRun, "docker-compose up --build -d", repositoryPath)
+			c.RunHeadless(toRun, "docker-compose up --build -d", repositoryPath)
+
+            color.Green("\nDeployment done\n\tCurrent logs:\n")
+            toRun = exec.Command("docker-compose", "logs", "-f", "-t")
+            c.Run(toRun, "docker-compose logs -f -t", repositoryPath)
 		},
 	}
 
