@@ -153,7 +153,7 @@ func main() {
 
 			color.Green("SSL setup done -- rebuilding application")
 			toRun = exec.Command("docker-compose", "down")
-			c.RunHeadless(toRun, "docker-compose down", repositoryPath)
+			c.RunHeadless(toRun, "docker-compose down --rmi local", repositoryPath)
 			toRun = exec.Command("docker-compose", "up", "--build", "-d")
 			c.Run(toRun, "docker-compose up --build -d", repositoryPath)
 
