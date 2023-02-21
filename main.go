@@ -91,6 +91,10 @@ func main() {
 			command = exec.Command("docker-compose", "down")
 			c.RunHeadless(command, "docker-compose down", repositoryPath)
 
+            /* Fixes timeout on build on QA vps: https://stackoverflow.com/a/69432587 */
+            os.Setenv("DOCKER_BUILDKIT", "0")
+            os.Setenv("COMPOSE_DOCKER_CLI_BUILD", "0")
+
 			command = exec.Command("docker-compose", "up", "--build", "-d")
 			c.Run(command, "docker-compose up", repositoryPath)
 
