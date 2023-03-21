@@ -12,9 +12,9 @@ import (
 
 	"github.com/go-git/go-git/v5"
 
-	c "gitlab.com/bogdzn/zru/certs"
-	d "gitlab.com/bogdzn/zru/deploy"
-	r "gitlab.com/bogdzn/zru/release"
+	c "github.com/zenith-rh/zru/certs"
+	d "github.com/zenith-rh/zru/deploy"
+	r "github.com/zenith-rh/zru/release"
 )
 
 var (
@@ -240,7 +240,7 @@ func main() {
 	deployCmd.Flags().StringVarP(&oldUrl, "original-url", "o", "timesheet.zenith-rh.com", "old deploy URL")
 
 	cloneCmd.Flags().StringVarP(&repositoryPath, "path", "p", ".", "repository path")
-	cloneCmd.Flags().StringVarP(&repoUrl, "url", "u", "https://gitlab.com/zenith-hr/TIMESHEET.git", "git clone url")
+	cloneCmd.Flags().StringVarP(&repoUrl, "url", "u", "https://github.com/zenith-rh/timesheet.git", "git clone url")
 
 	certsCmd.Flags().StringVarP(&domain, "url", "u", "timesheet.zenith-rh.com", "domain of your new environment")
 	certsCmd.Flags().StringVarP(&email, "email", "e", "backoffice@zenith-rh.com", "renewal email")
