@@ -95,7 +95,7 @@ func main() {
             os.Setenv("DOCKER_BUILDKIT", "0")
             os.Setenv("COMPOSE_DOCKER_CLI_BUILD", "0")
 
-			command = exec.Command("docker compose", "up", "--build", "-d")
+			command = exec.Command("docker compose", "up", "--force-recreate", "-d")
 			c.Run(command, "docker compose up", repositoryPath)
 
 		},
