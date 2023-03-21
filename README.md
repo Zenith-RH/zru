@@ -70,7 +70,7 @@ Available Commands:
 Flags:
   -h, --help          help for clone
   -p, --path string   repository path (default ".")
-  -u, --url string    git clone url (default "https://gitlab.com/zenith-hr/TIMESHEET.git")
+  -u, --url string    git clone url (default "https://github.com/zenith-rh/timesheet.git")
   -v, --version       version for clone
 
 Use "clone [command] --help" for more information about a command.
@@ -78,7 +78,7 @@ Use "clone [command] --help" for more information about a command.
 
 Example:
 ```bash
-zru clone --url git@gitlab.com:bogdzn/zru.git --path /tmp/zru
+zru clone --url git@github.com:zenith-rh/zru.git --path /tmp/zru
 ```
 
 ### nuke

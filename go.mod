@@ -1,4 +1,4 @@
-module gitlab.com/bogdzn/zru
+module github.com/zenith-rh/zru
 
 go 1.19
 
