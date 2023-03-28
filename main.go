@@ -43,7 +43,7 @@ var (
 */
 
 func main() {
-    var version = "0.0.5"
+	var version = "0.0.5"
 
 	var releaseCmd = &cobra.Command{
 		Use:     "release",
@@ -58,17 +58,17 @@ func main() {
 			r.FetchFromRemote(srcRemote, repositoryPath)
 			r.FetchFromRemote(targetRemote, repositoryPath)
 
-            toRun := exec.Command("git", "pull")
+			toRun := exec.Command("git", "pull")
 			c.RunHeadless(toRun, "git pull", repositoryPath)
 
-            toRun = exec.Command("git", "switch", srcBranch)
+			toRun = exec.Command("git", "switch", srcBranch)
 			c.RunHeadless(toRun, "git switch srcBranch", repositoryPath)
 
 			toRun = exec.Command("git", "switch", "-c", targetBranch)
 			c.RunHeadless(toRun, "git switch -c targetBranch", repositoryPath)
 
-            toRun = exec.Command("git", "push", "-u", targetRemote, targetBranch, "-f")
-            c.RunHeadless(toRun, "git push targetRemote targetBranch -f", repositoryPath)
+			toRun = exec.Command("git", "push", "-u", targetRemote, targetBranch, "-f")
+			c.RunHeadless(toRun, "git push targetRemote targetBranch -f", repositoryPath)
 		},
 	}
 
@@ -91,9 +91,9 @@ func main() {
 			command = exec.Command("docker", "compose", "down")
 			c.RunHeadless(command, "docker compose down", repositoryPath)
 
-            /* Fixes timeout on build on QA vps: https://stackoverflow.com/a/69432587 */
-            os.Setenv("DOCKER_BUILDKIT", "0")
-            os.Setenv("COMPOSE_DOCKER_CLI_BUILD", "0")
+			/* Fixes timeout on build on QA vps: https://stackoverflow.com/a/69432587 */
+			os.Setenv("DOCKER_BUILDKIT", "0")
+			os.Setenv("COMPOSE_DOCKER_CLI_BUILD", "0")
 
 			command = exec.Command("docker", "compose", "up", "--force-recreate", "-d")
 			c.Run(command, "docker compose up", repositoryPath)
@@ -134,7 +134,7 @@ func main() {
 			}
 
 			entrypoint := fmt.Sprintf("openssl req -x509 -nodes -newkey rsa:4096 -days 1 -keyout '%s' -out '%s' -subj '/CN=localhost'", privPath, fullchainPath)
-            toRun := exec.Command("docker", "compose", "run", "--rm", "--entrypoint", entrypoint, "certbot")
+			toRun := exec.Command("docker", "compose", "run", "--rm", "--entrypoint", entrypoint, "certbot")
 			c.RunHeadless(toRun, "docker compose run create key", repositoryPath)
 
 			color.Green("Booting up nginx")
@@ -161,9 +161,9 @@ func main() {
 			toRun = exec.Command("docker", "compose", "up", "--build", "-d")
 			c.Run(toRun, "docker compose up --build -d", repositoryPath)
 
-            color.Green("\nDeployment done\n\tCurrent logs:\n")
-            toRun = exec.Command("docker", "compose", "logs", "-f", "-t")
-            c.Run(toRun, "docker compose logs -f -t", repositoryPath)
+			color.Green("\nDeployment done\n\tCurrent logs:\n")
+			toRun = exec.Command("docker", "compose", "logs", "-f", "-t")
+			c.Run(toRun, "docker compose logs -f -t", repositoryPath)
 		},
 	}
 
@@ -203,7 +203,7 @@ func main() {
 		},
 	}
 
-    var nukeCmd = &cobra.Command{
+	var nukeCmd = &cobra.Command{
 		Use:     "nuke",
 		Short:   "nukes docker volumes, images, & everything",
 		Long:    "destroys all deployment config for dev purposes",
@@ -214,18 +214,18 @@ func main() {
 
 			color.Green("Stopping and removing all docker images")
 
-            toRun := exec.Command("docker", "compose", "down")
+			toRun := exec.Command("docker", "compose", "down")
 			c.RunHeadless(toRun, "docker compose down", repositoryPath)
-            toRun = exec.Command("docker", "rmi", "-f", "$(docker images -aq)")
+			toRun = exec.Command("docker", "rmi", "-f", "$(docker images -aq)")
 			c.RunHeadless(toRun, "docker rmi -f $(docker images -aq)", repositoryPath)
 
-            color.Green("Removing volumes and networks")
-            toRun = exec.Command("docker", "volume", "prune", "-f")
+			color.Green("Removing volumes and networks")
+			toRun = exec.Command("docker", "volume", "prune", "-f")
 			c.RunHeadless(toRun, "docker volume prune -f", repositoryPath)
-            toRun = exec.Command("docker", "network", "prune", "-f")
+			toRun = exec.Command("docker", "network", "prune", "-f")
 			c.RunHeadless(toRun, "docker network prune -f", repositoryPath)
 
-            color.Green("[+] Done")
+			color.Green("[+] Done")
 		},
 	}
 
