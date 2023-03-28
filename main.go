@@ -43,7 +43,7 @@ var (
 */
 
 func main() {
-	var version = "0.0.5"
+	var version = "0.0.6"
 
 	var releaseCmd = &cobra.Command{
 		Use:     "release",
@@ -95,8 +95,12 @@ func main() {
 			os.Setenv("DOCKER_BUILDKIT", "0")
 			os.Setenv("COMPOSE_DOCKER_CLI_BUILD", "0")
 
-			command = exec.Command("docker", "compose", "up", "--force-recreate", "-d")
-			c.Run(command, "docker compose up", repositoryPath)
+			toRun := exec.Command("docker", "compose", "up", "--build", "--force-recreate", "-d")
+			c.Run(toRun, "docker compose up --build -d", repositoryPath)
+
+			color.Green("\nDeployment done\n\tCurrent logs:\n")
+			toRun = exec.Command("docker", "compose", "logs", "-f", "-t")
+			c.Run(toRun, "docker compose logs -f -t", repositoryPath)
 
 		},
 	}
@@ -110,6 +114,7 @@ func main() {
 		Run: func(cmd *cobra.Command, args []string) {
 			color.Cyan("Running certs command")
 
+			d.ResetChanges(repositoryPath)
 			d.SearchAndReplace(oldUrl, domain, repositoryPath)
 
 			color.Green("Downloading recommended TLS files")
