@@ -216,8 +216,8 @@ func main() {
 
             toRun := exec.Command("docker", "compose", "down")
 			c.RunHeadless(toRun, "docker compose down", repositoryPath)
-            toRun = exec.Command("docker", "image", "prune", "-a", "-f")
-			c.RunHeadless(toRun, "docker image prune -a -f", repositoryPath)
+            toRun = exec.Command("docker", "rmi", "-f", "$(docker images -aq)")
+			c.RunHeadless(toRun, "docker rmi -f $(docker images -aq)", repositoryPath)
 
             color.Green("Removing volumes and networks")
             toRun = exec.Command("docker", "volume", "prune", "-f")
