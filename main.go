@@ -43,7 +43,7 @@ var (
 */
 
 func main() {
-	var version = "0.0.6"
+	var version = "0.0.7"
 
 	var releaseCmd = &cobra.Command{
 		Use:     "release",
@@ -69,6 +69,20 @@ func main() {
 
 			toRun = exec.Command("git", "push", "-u", targetRemote, targetBranch, "-f")
 			c.RunHeadless(toRun, "git push targetRemote targetBranch -f", repositoryPath)
+		},
+	}
+
+	var replaceCmd = &cobra.Command{
+		Use:     "replace",
+		Short:   "replaces one url with another",
+		Long:    "Replaces one url with another to make sure the server deploys properly",
+		Version: version,
+		Args:    cobra.MaximumNArgs(0),
+		Run: func(cmd *cobra.Command, args []string) {
+			color.Cyan("Running replace command")
+
+			d.ResetChanges(repositoryPath)
+			d.SearchAndReplace(oldUrl, newUrl, repositoryPath)
 		},
 	}
 
@@ -250,7 +264,7 @@ func main() {
 	certsCmd.Flags().StringVarP(&domain, "url", "u", "timesheet.zenith-rh.com", "domain of your new environment")
 	certsCmd.Flags().StringVarP(&email, "email", "e", "backoffice@zenith-rh.com", "renewal email")
 
-	cloneCmd.AddCommand(deployCmd, releaseCmd, certsCmd, nukeCmd)
+	cloneCmd.AddCommand(deployCmd, releaseCmd, certsCmd, nukeCmd, releaseCmd)
 
 	if err := cloneCmd.Execute(); err != nil {
 		panic(err)
