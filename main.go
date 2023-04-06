@@ -264,7 +264,11 @@ func main() {
 	certsCmd.Flags().StringVarP(&domain, "url", "u", "timesheet.zenith-rh.com", "domain of your new environment")
 	certsCmd.Flags().StringVarP(&email, "email", "e", "backoffice@zenith-rh.com", "renewal email")
 
-	cloneCmd.AddCommand(deployCmd, releaseCmd, certsCmd, nukeCmd, releaseCmd)
+    replaceCmd.Flags().StringVarP(&repositoryPath, "path", "p", ".", "repository path")
+	replaceCmd.Flags().StringVarP(&newUrl, "url", "u", "qa-timesheet.zenith-rh.com", "new replace URL")
+	replaceCmd.Flags().StringVarP(&oldUrl, "original-url", "o", "timesheet.zenith-rh.com", "old replace URL")
+
+	cloneCmd.AddCommand(deployCmd, releaseCmd, certsCmd, nukeCmd, replaceCmd)
 
 	if err := cloneCmd.Execute(); err != nil {
 		panic(err)

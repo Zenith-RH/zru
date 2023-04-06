@@ -66,6 +66,7 @@ Available Commands:
   help        Help about any command
   nuke        nukes docker volumes, images, & everything
   release     delivers code release across repositories
+  replace     replaces one url with another
 
 Flags:
   -h, --help          help for clone
@@ -176,4 +177,27 @@ Use "release [command] --help" for more information about a command.
 Example:
 ```bash
 zru release --path ./repository --remote backup --branch backup-$(date +%s) --src-branch develop
+```
+
+### replace
+
+Replaces all URLs in one directory for another.
+
+```bash
+Replaces one url with another to make sure the server deploys properly
+
+Usage:
+  clone replace [flags]
+
+Flags:
+  -h, --help                  help for replace
+  -o, --original-url string   old replace URL (default "timesheet.zenith-rh.com")
+  -p, --path string           repository path (default ".")
+  -u, --url string            new replace URL (default "qa-timesheet.zenith-rh.com")
+  -v, --version               version for replace
+```
+
+Example:
+```bash
+zru replace --url dev-timesheet.zenith-rh.com
 ```
