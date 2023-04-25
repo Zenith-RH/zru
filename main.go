@@ -109,6 +109,14 @@ func main() {
 			os.Setenv("DOCKER_BUILDKIT", "0")
 			os.Setenv("COMPOSE_DOCKER_CLI_BUILD", "0")
 
+			currentBranch, error := exec.Command("git", "branch", "--show-current").Output()
+			if error != nil {
+				log.Fatal("Could not run \"git branch --show-current\"")
+			}
+
+			// needed for notify_slack command
+			os.Setenv("GIT_BRANCH", string(currentBranch))
+
 			toRun := exec.Command("docker", "compose", "up", "--build", "--force-recreate", "-d")
 			c.Run(toRun, "docker compose up --build -d", repositoryPath)
 
@@ -264,7 +272,7 @@ func main() {
 	certsCmd.Flags().StringVarP(&domain, "url", "u", "timesheet.zenith-rh.com", "domain of your new environment")
 	certsCmd.Flags().StringVarP(&email, "email", "e", "backoffice@zenith-rh.com", "renewal email")
 
-    replaceCmd.Flags().StringVarP(&repositoryPath, "path", "p", ".", "repository path")
+	replaceCmd.Flags().StringVarP(&repositoryPath, "path", "p", ".", "repository path")
 	replaceCmd.Flags().StringVarP(&newUrl, "url", "u", "qa-timesheet.zenith-rh.com", "new replace URL")
 	replaceCmd.Flags().StringVarP(&oldUrl, "original-url", "o", "timesheet.zenith-rh.com", "old replace URL")
 
