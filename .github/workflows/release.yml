@@ -1,5 +1,8 @@
 name: Publish github release
 
+permissions:
+  contents: read
+
 on:
   create:
     tags: ["v*"]
