@@ -273,6 +273,7 @@ func main() {
 	deployCmd.Flags().StringVarP(&repositoryPath, "path", "p", ".", "repository path")
 	deployCmd.Flags().StringVarP(&newUrl, "url", "u", "qa-timesheet.zenith-rh.com", "new deploy URL")
 	deployCmd.Flags().StringVarP(&oldUrl, "original-url", "o", "timesheet.zenith-rh.com", "old deploy URL")
+	deployCmd.Flags().BoolVarP(&interactive, "interactive", "i", true, "run commands in interactive mode")
 
 	cloneCmd.Flags().StringVarP(&repositoryPath, "path", "p", ".", "repository path")
 	cloneCmd.Flags().StringVarP(&repoUrl, "url", "u", "https://github.com/zenith-rh/timesheet.git", "git clone url")
