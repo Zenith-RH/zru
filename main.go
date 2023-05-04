@@ -28,6 +28,7 @@ var (
 	repoUrl        string
 	domain         string
 	email          string
+	interactive    bool
 )
 
 /*
@@ -43,7 +44,7 @@ var (
 */
 
 func main() {
-	var version = "0.0.7"
+	var version = "0.0.8"
 
 	var releaseCmd = &cobra.Command{
 		Use:     "release",
@@ -117,13 +118,19 @@ func main() {
 			// needed for notify_slack command
 			os.Setenv("GIT_BRANCH", string(currentBranch))
 
-			toRun := exec.Command("docker", "compose", "up", "--build", "--force-recreate", "-d")
-			c.Run(toRun, "docker compose up --build -d", repositoryPath)
+			if interactive {
+				toRun := exec.Command("docker", "compose", "up", "--build", "--force-recreate", "-d")
+				c.Run(toRun, "docker compose up --build -d", repositoryPath)
 
-			color.Green("\nDeployment done\n\tCurrent logs:\n")
-			toRun = exec.Command("docker", "compose", "logs", "-f", "-t")
-			c.Run(toRun, "docker compose logs -f -t", repositoryPath)
+				color.Green("\nDeployment done\n\tCurrent logs:\n")
+				toRun = exec.Command("docker", "compose", "logs", "-f", "-t")
+				c.Run(toRun, "docker compose logs -f -t", repositoryPath)
+			} else {
+				toRun := exec.Command("docker", "compose", "up", "--build", "--force-recreate", "-d")
+				c.RunHeadless(toRun, "docker compose up --build -d", repositoryPath)
 
+				color.Green("\n[+] Deployment done\n")
+			}
 		},
 	}
 
@@ -261,6 +268,7 @@ func main() {
 	releaseCmd.Flags().StringVarP(&srcRemote, "src-remote", "r", "origin", "git remote source")
 	releaseCmd.Flags().StringVarP(&srcBranch, "src-branch", "b", "master", "branch from which we deliver release")
 	releaseCmd.Flags().StringVarP(&repositoryPath, "path", "p", ".", "repository path")
+	releaseCmd.Flags().BoolVarP(&interactive, "interactive", "i", true, "run commands in interactive mode")
 
 	deployCmd.Flags().StringVarP(&repositoryPath, "path", "p", ".", "repository path")
 	deployCmd.Flags().StringVarP(&newUrl, "url", "u", "qa-timesheet.zenith-rh.com", "new deploy URL")
